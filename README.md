@@ -1,5 +1,6 @@
 # Product Management REST API
 
+<img width="200" height="200" alt="Go Logo" src="https://upload.wikimedia.org/wikipedia/commons/0/05/Go_Logo_Blue.svg" />
 A production-style REST API for product management, built with **Go**, **Gin**, **GORM** and **MySQL**. It features JWT authentication, per-IP rate limiting, CORS support, a one-command database reset and seeder, and a fully containerized setup with Docker.
 
 ![Go](https://img.shields.io/badge/Go-1.24-00ADD8?style=flat-square&logo=go&logoColor=white)
@@ -536,8 +537,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](https:/
 
 Full Stack Developer • Backend Engineer
 
-![Go](https://img.shields.io/badge/Go-1.24-00ADD8?style=flat-square&logo=go&logoColor=white)
-
+<img width="200" height="200" alt="Go Logo" src="https://upload.wikimedia.org/wikipedia/commons/0/05/Go_Logo_Blue.svg" />
 <br/>
 
 If this project helped you, please consider giving it a ⭐

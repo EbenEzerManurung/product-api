@@ -448,16 +448,14 @@ Import `postman_collection.json` (located in the project root) to test every end
 <details>
 <summary><b>API responses</b></summary>
 
-| Login | Product list |
-|---|---|
-| <img width="1341" height="778" alt="image" src="https://github.com/user-attachments/assets/733b0681-566a-455d-9945-c777adbee4ad" /> <img width="1336" height="780" alt="image" src="https://github.com/user-attachments/assets/8e65076a-aaa1-448e-9a60-bc9333c483b4" />
+##Login
+<img width="1341" height="778" alt="image" src="https://github.com/user-attachments/assets/733b0681-566a-455d-9945-c777adbee4ad" /> 
 
- |
+##Product list
+<img width="1336" height="780" alt="image" src="https://github.com/user-attachments/assets/8e65076a-aaa1-448e-9a60-bc9333c483b4" />
 
-| Create product | Rate limit (429) |
-|---|---|
-| <img width="1326" height="799" alt="image" src="https://github.com/user-attachments/assets/5c49eb15-e4f9-4a9c-8f95-9aab52cacc23" />
- |
+##Create product 
+<img width="1326" height="799" alt="image" src="https://github.com/user-attachments/assets/5c49eb15-e4f9-4a9c-8f95-9aab52cacc23" />
 
 </details>
 

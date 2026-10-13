@@ -451,6 +451,7 @@ Import `postman_collection.json` (located in the project root) to test every end
 | Login | Product list |
 |---|---|
 | <img width="1341" height="778" alt="image" src="https://github.com/user-attachments/assets/733b0681-566a-455d-9945-c777adbee4ad" />
+<img width="1336" height="780" alt="image" src="https://github.com/user-attachments/assets/8e65076a-aaa1-448e-9a60-bc9333c483b4" />
  |
 
 | Create product | Rate limit (429) |

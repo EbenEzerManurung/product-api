@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="200" height="200" alt="Product API Logo" src="https://cdn-icons-png.flaticon.com/512/3233/3233509.png" />
+<img width="200" height="200" alt="Product API Logo" src="[https://cdn-icons-png.flaticon.com/512/3233/3233509.png"](https://img.shields.io/badge/Go-1.24-00ADD8?style=for-the-badge&logo=go&logoColor=white) />
 
 <br/>
 

@@ -521,18 +521,26 @@ Contributions, issues and feature requests are welcome.
 
 ---
 
-## License
+## 📄 License
 
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
+This project is licensed under the **MIT License** — see the [LICENSE](https://tlo.mit.edu/resources/mit-github) file for details.
 
 ---
 
 ## Author
 
-**Your Name**, Backend Developer
+<div align="center">
 
-[![GitHub](https://img.shields.io/badge/GitHub-YOUR__USERNAME-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/YOUR_USERNAME)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/YOUR_PROFILE)
-[![Email](https://img.shields.io/badge/Email-Contact-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:you@example.com)
+<img width="256" height="256" alt="image" src="https://github.com/user-attachments/assets/0e9e5c7a-02f2-488c-8e99-9a24b82f7d40" />
 
-If this project is useful to you, please consider giving it a star.
+### Eben Nezer Manurung
+
+Full Stack Developer • Backend Engineer
+
+[![GitHub](https://img.shields.io/badge/GitHub-EbenEzerManurung-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/EbenEzerManurung)
+
+<br/>
+
+If this project helped you, please consider giving it a ⭐
+
+</div>

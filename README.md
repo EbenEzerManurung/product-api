@@ -1,253 +1,156 @@
-<div align="center">
-
-<img width="200" height="200" alt="Product API Logo" src="[https://cdn-icons-png.flaticon.com/512/3233/3233509.png"](https://img.shields.io/badge/Go-1.24-00ADD8?style=for-the-badge&logo=go&logoColor=white) />
-
-<br/>
-
 # Product Management REST API
 
-**Backend REST API modern untuk manajemen produk dengan autentikasi JWT, rate limiting, dan dukungan Docker.**
+A production-style REST API for product management, built with **Go**, **Gin**, **GORM** and **MySQL**. It features JWT authentication, per-IP rate limiting, CORS support, a one-command database reset and seeder, and a fully containerized setup with Docker.
 
-<br/>
-
-![Go](https://img.shields.io/badge/Go-1.24-00ADD8?style=for-the-badge&logo=go&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Gin](https://img.shields.io/badge/Gin-1.10-008ECF?style=for-the-badge&logo=gin&logoColor=white)
-![GORM](https://img.shields.io/badge/GORM-1.25-4CAF50?style=for-the-badge&logo=go&logoColor=white)
-
-![JWT](https://img.shields.io/badge/Auth-JWT-0F766E?style=flat-square&logo=jsonwebtokens&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white)
+![Go](https://img.shields.io/badge/Go-1.24-00ADD8?style=flat-square&logo=go&logoColor=white)
+![Gin](https://img.shields.io/badge/Gin-1.10-008ECF?style=flat-square)
+![GORM](https://img.shields.io/badge/GORM-1.25-4CAF50?style=flat-square)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-F59E0B?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Active-10B981?style=flat-square)
-
-<br/>
-
-**[Overview](#-overview)** &nbsp;•&nbsp; **[Features](#-features)** &nbsp;•&nbsp; **[Tech Stack](#-tech-stack)** &nbsp;•&nbsp; **[Architecture](#-architecture)** &nbsp;•&nbsp; **[Getting Started](#-getting-started)** &nbsp;•&nbsp; **[API Endpoints](#-api-endpoints)** &nbsp;•&nbsp; **[Postman Testing](#-postman-testing)** &nbsp;•&nbsp; **[Roadmap](#-roadmap)**
-
-</div>
-
-<br/>
 
 ---
 
-## 📖 Overview
+## Table of Contents
 
-**Product Management REST API** adalah backend service yang dibangun dengan **Go** dan **Gin Framework** untuk mengelola data produk secara efisien. API ini menyediakan operasi CRUD lengkap, autentikasi berbasis JWT, rate limiting untuk mencegah penyalahgunaan, dan dukungan CORS untuk integrasi dengan aplikasi frontend dari berbagai domain.
-
-Project ini dirancang mengikuti best practice industri: **clean layered architecture** (`config`, `controller`, `service`, `repository`, `model`), dependency injection, dan penggunaan **GORM** sebagai ORM untuk MySQL.
-
-<br/>
-
-<table>
-  <tr>
-    <td width="33%" valign="top">
-      <h4>🔐 Authentication</h4>
-      JWT-based authentication dengan access token &amp; refresh token. Password di-hash menggunakan bcrypt.
-    </td>
-    <td width="33%" valign="top">
-      <h4>⚡ Rate Limiting</h4>
-      Proteksi endpoint sensitif dengan rate limit per IP untuk mencegah abuse &amp; brute-force.
-    </td>
-    <td width="33%" valign="top">
-      <h4>🐳 Docker Ready</h4>
-      Multi-stage Dockerfile + docker-compose untuk deployment yang konsisten di semua environment.
-    </td>
-  </tr>
-  <tr>
-    <td width="33%" valign="top">
-      <h4>🌐 CORS Support</h4>
-      Cross-Origin Resource Sharing aktif — siap diintegrasikan dengan frontend dari domain manapun.
-    </td>
-    <td width="33%" valign="top">
-      <h4>📦 Fresh Migrate &amp; Seeder</h4>
-      Satu perintah untuk drop, migrate ulang, dan seed data dummy: <code>go run main.go fresh:migrate --seeder</code>.
-    </td>
-    <td width="33%" valign="top">
-      <h4>✅ Input Validation</h4>
-      Validasi server-side untuk semua input — title, price, category, dan images wajib diisi.
-    </td>
-  </tr>
-</table>
-
-<br/>
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [CLI Commands](#cli-commands)
+- [API Reference](#api-reference)
+- [Rate Limiting](#rate-limiting)
+- [API Testing with Postman](#api-testing-with-postman)
+- [Screenshots](#screenshots)
+- [Design Decisions](#design-decisions)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
 ---
 
-## ✨ Features
+## Overview
 
-<details open>
-<summary><b>🛍️ Product Management (CRUD)</b></summary>
-<br/>
+This service exposes a RESTful API for managing products and authenticating users. It follows a **clean layered architecture** (`route → controller → service → repository → model`) with dependency injection, which keeps HTTP concerns, business logic and data access cleanly separated and easy to test.
 
-- **Create** produk baru dengan validasi lengkap (title, price > 0, category, min. 1 image)
-- **Read** semua produk dengan dukungan:
-  - 🔍 Search berdasarkan judul (`?search=keyword`)
-  - 🏷️ Filter berdasarkan kategori (`?category=Clothes`)
-  - 📄 Pagination (`?limit=10&page=2`)
-- **Read** detail produk by ID dengan handling **404 Not Found** yang proper
-- **Update** produk berdasarkan ID dengan tracking `updated_by` & `updated_at`
-- **Delete** produk berdasarkan ID (soft delete dengan GORM)
-
-</details>
-
-<details open>
-<summary><b>🔐 Authentication</b></summary>
-<br/>
-
-- **Register** user baru dengan konfirmasi password
-- **Login** dengan username & password → menghasilkan:
-  - `authentication_token` (access token, expires 15 menit)
-  - `refresh_token` (expires 7 hari)
-- **Password hashing** menggunakan bcrypt (cost factor default)
-- **JWT claims** menyimpan `sub`, `username`, `type`, `exp`, `iat`
-
-</details>
-
-<details open>
-<summary><b>🛡️ Security Features</b></summary>
-<br/>
-
-- **Rate Limiting** per IP address:
-  - Auth endpoints (register/login): **3 request / 60 detik**
-  - Protected endpoints (create/update/delete product): **1 request / 5 detik**
-- **CORS** aktif untuk semua origin (development-friendly)
-- **JWT validation** di setiap endpoint yang dilindungi
-- **Parameterized queries** via GORM untuk mencegah SQL injection
-- **Input validation** dengan Gin binding tags
-
-</details>
-
-<details>
-<summary><b>🗄️ Database Layer</b></summary>
-<br/>
-
-- **GORM** sebagai ORM dengan auto-migration
-- **Custom type** `JSONStringSlice` untuk menyimpan array URL gambar sebagai JSON di MySQL
-- **Soft delete** dengan `gorm.DeletedAt`
-- **Timestamps** otomatis (`created_at`, `updated_at`)
-- **Audit fields**: `created_by`, `created_by_id`, `updated_by`, `updated_by_id`
-
-</details>
-
-<details>
-<summary><b>🐳 Deployment &amp; Tooling</b></summary>
-<br/>
-
-- **Multi-stage Dockerfile** — image final hanya ~15 MB (Alpine-based)
-- **docker-compose.yml** — menjalankan API + MySQL dengan satu perintah
-- **Custom CLI command** di `main.go`:
-  - `go run main.go serve` — start server
-  - `go run main.go fresh:migrate` — drop + re-migrate
-  - `go run main.go fresh:migrate --seeder` — drop + re-migrate + seed
-- **Environment variables** via `.env` dengan godotenv
-
-</details>
-
-<br/>
+| Capability | Summary |
+|---|---|
+| **Authentication** | JWT access and refresh tokens; passwords hashed with bcrypt |
+| **Abuse protection** | Per-IP rate limiting on authentication and write endpoints |
+| **Interoperability** | CORS enabled so web apps from any domain can consume the API |
+| **Developer experience** | `fresh:migrate --seeder` drops, recreates and seeds the database in one command |
+| **Deployment** | Multi-stage Dockerfile and `docker-compose` for reproducible environments |
 
 ---
 
-## 🛠️ Tech Stack
+## Features
+
+### Product management
+
+- Create products with server-side validation (`title`, `price > 0`, `category`, at least one `image`)
+- List products with **search** (`?search=`), **category filter** (`?category=`) and **pagination** (`?limit=&page=`)
+- Retrieve a product by ID, with a proper `404 Not Found` response
+- Update products with `updated_by` / `updated_at` audit tracking
+- Delete products (soft delete via `gorm.DeletedAt`)
+
+### Authentication and security
+
+- User registration with password confirmation
+- Login returns an `authentication_token` (access token, 15 min) and a `refresh_token` (7 days)
+- Passwords hashed with bcrypt
+- JWT validation middleware on all protected routes (claims: `sub`, `username`, `type`, `exp`, `iat`)
+- Per-IP rate limiting (see [Rate Limiting](#rate-limiting))
+- Parameterized queries via GORM to prevent SQL injection
+- CORS enabled for all origins (development-friendly default)
+
+### Data layer
+
+- GORM auto-migration
+- Custom `JSONStringSlice` type to store image URL arrays as JSON in MySQL
+- Automatic timestamps (`created_at`, `updated_at`)
+- Audit fields: `created_by`, `created_by_id`, `updated_by`, `updated_by_id`
+
+### Tooling
+
+- Multi-stage, Alpine-based Docker image
+- `docker-compose.yml` running the API and MySQL together
+- Built-in CLI in `main.go` for serving, resetting and seeding
+- Environment-based configuration via `.env` (godotenv)
+
+---
+
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| **Language** | Go 1.24 |
-| **Web Framework** | Gin 1.10 |
-| **ORM** | GORM 1.25 + MySQL Driver |
-| **Database** | MySQL 8.0 |
-| **Authentication** | JWT (`golang-jwt/jwt/v5`) + bcrypt |
-| **Rate Limiting** | `golang.org/x/time/rate` |
-| **CORS** | `gin-contrib/cors` |
-| **Config** | `joho/godotenv` |
-| **Documentation** | Swagger (`swaggo/gin-swagger`) |
-| **Container** | Docker &amp; docker-compose |
-
-<br/>
+| Language | Go 1.24 |
+| Web framework | Gin 1.10 |
+| ORM | GORM 1.25 + MySQL driver |
+| Database | MySQL 8.0 |
+| Authentication | `golang-jwt/jwt/v5`, bcrypt |
+| Rate limiting | `golang.org/x/time/rate` |
+| CORS | `gin-contrib/cors` |
+| Configuration | `joho/godotenv` |
+| Containerization | Docker, Docker Compose |
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
-Request mengalir melalui layer yang terpisah dengan jelas:
+```mermaid
+flowchart TD
+    A[Client: Postman / Browser / Frontend] -->|REST, JSON| B[Middleware: CORS, Logger, Auth, Rate Limiter]
+    B --> C[Route layer]
+    C --> D[Controller layer: bind, validate, respond]
+    D --> E[Service layer: business logic, JWT, hashing]
+    E --> F[Repository layer: GORM, queries]
+    F --> G[(MySQL: users, products)]
+```
+
+| Layer | Responsibility |
+|---|---|
+| **Middleware** | Cross-cutting concerns: CORS, logging, JWT validation, rate limiting |
+| **Route** | Router setup and route grouping (public vs. protected) |
+| **Controller** | Parse and validate requests, format HTTP responses |
+| **Service** | Business rules, token generation, password hashing |
+| **Repository** | Data access through GORM; the only layer that touches the database |
+| **Model** | GORM entities (`User`, `Product`) |
+
+---
+
+## Project Structure
 
 ```text
-┌──────────────────────────────────────────┐
-│          Client (Postman / Browser)      │
-└──────────────────────────────────────────┘
-                     │  REST API (JSON)
-                     ▼
-┌──────────────────────────────────────────┐
-│            Middleware Layer              │
-│   CORS · Logger · Auth · Rate Limiter    │
-└──────────────────────────────────────────┘
-                     │
-                     ▼
-┌──────────────────────────────────────────┐
-│           Route Layer (route/)           │
-│       SetupRouter · Route Grouping       │
-└──────────────────────────────────────────┘
-                     │
-                     ▼
-┌──────────────────────────────────────────┐
-│       Controller Layer (controller/)     │
-│   Bind JSON · Validate · Format Response │
-└──────────────────────────────────────────┘
-                     │
-                     ▼
-┌──────────────────────────────────────────┐
-│         Service Layer (service/)         │
-│      Business Logic · JWT · Hashing      │
-└──────────────────────────────────────────┘
-                     │
-                     ▼
-┌──────────────────────────────────────────┐
-│      Repository Layer (repository/)      │
-│         GORM · SQL · Transactions        │
-└──────────────────────────────────────────┘
-                     │
-                     ▼
-┌──────────────────────────────────────────┐
-│              MySQL Database              │
-│         users · products (tables)        │
-└──────────────────────────────────────────┘
-
-<details> <summary><b>📁 Project Structure</b></summary> <br/>
-text
 product-api/
 ├── config/
-│   └── config.go                 # Load environment variables
-│
+│   └── config.go                 # Environment variable loading
 ├── controller/
 │   ├── auth_controller.go        # Auth HTTP handlers
 │   └── product_controller.go     # Product HTTP handlers
-│
 ├── database/
 │   └── database.go               # DB connection + FreshMigrate
-│
 ├── middleware/
-│   ├── auth.go                   # JWT validation middleware
+│   ├── auth.go                   # JWT validation
 │   ├── cors.go                   # CORS configuration
 │   └── rate_limit.go             # Per-IP rate limiter
-│
 ├── model/
 │   └── model.go                  # GORM models (User, Product)
-│
 ├── repository/
 │   ├── product_repository.go     # Product data access
 │   └── user_repository.go        # User data access
-│
 ├── route/
 │   └── routes.go                 # Router setup
-│
 ├── seeder/
-│   └── seeder.go                 # Seed dummy data
-│
+│   └── seeder.go                 # Demo data seeder
 ├── service/
 │   ├── auth_service.go           # Auth business logic
 │   └── product_service.go        # Product business logic
-│
-├── docs/                         # Swagger docs (generated)
-├── .env                          # Environment variables
+├── docs/                         # API documentation assets
+├── .env.example                  # Environment template
 ├── .dockerignore
 ├── Dockerfile
 ├── docker-compose.yml
@@ -255,109 +158,155 @@ product-api/
 ├── go.sum
 ├── main.go                       # CLI entry point
 └── README.md
-</details>
-🚀 Getting Started
-Prerequisites
-Go 1.24+ — Download
+```
 
-MySQL 8.0+ — atau XAMPP / Laragon
+---
 
-Docker Desktop (opsional) — Download
+## Getting Started
 
-Postman (opsional) — untuk testing
+### Prerequisites
 
-Installation (Lokal)
-bash
-# 1. Clone repository
-git clone https://github.com/USERNAME/product-api.git
+- [Go 1.24+](https://go.dev/dl/)
+- MySQL 8.0+ (or XAMPP / Laragon)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (optional)
+- [Postman](https://www.postman.com/downloads/) (optional)
+
+### Option 1: Run locally
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/product-api.git
 cd product-api
 
-# 2. Buat database
+# 2. Create the database
 mysql -u root -p -e "CREATE DATABASE product_api;"
 
-# 3. Setup environment variables
+# 3. Configure environment variables
 cp .env.example .env
-# Edit .env sesuai kredensial MySQL Anda
+# then edit .env to match your MySQL credentials
 
-# 4. Download dependencies
+# 4. Install dependencies
 go mod tidy
 
-# 5. Migrate + seed data awal
+# 5. Migrate and seed the database
 go run main.go fresh:migrate --seeder
 
-# 6. Jalankan server
+# 6. Start the server
 go run main.go serve
-Server berjalan di: http://localhost:8080
+```
 
-Installation (Docker)
-bash
-# 1. Clone repository
-git clone https://github.com/USERNAME/product-api.git
+The API is now available at `http://localhost:8080`.
+
+### Option 2: Run with Docker
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/product-api.git
 cd product-api
 
-# 2. Build image
+# 2. Build the image
 docker compose build
 
-# 3. Jalankan MySQL
+# 3. Start MySQL and wait until it is healthy (~30 seconds)
 docker compose up -d mysql
-
-# 4. Tunggu MySQL healthy (~30 detik)
 docker compose ps
 
-# 5. Migrate + seeder
+# 4. Migrate and seed the database
 docker compose run --rm api ./server fresh:migrate --seeder
 
-# 6. Jalankan API
+# 5. Start the API
 docker compose up -d api
-Server berjalan di: http://localhost:8080
+```
 
-Demo Account (dari Seeder)
-Username	Password	Role
-jhon_doe	supersecret	User
-⚠️ Warning: Akun demo hanya untuk development. Ganti sebelum deploy ke production.
+The API is now available at `http://localhost:8080`.
 
+### Demo account
 
-⚙️ Environment Variables
-Buat file .env di root project:
+Created by the seeder:
 
-env
-# Database
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=product_api
+| Username | Password |
+|---|---|
+| `jhon_doe` | `supersecret` |
 
-# JWT
-JWT_SECRET=your-super-secret-jwt-key-min-32-chars
-JWT_ACCESS_EXPIRY=15m
-JWT_REFRESH_EXPIRY=168h
+> **Warning:** Demo credentials are for development only. Change or remove them before deploying to production.
 
-# Server
-SERVER_PORT=8080
-CACHE_TTL=60s
+---
 
-📡 API Endpoints
-🔓 Public Endpoints
-Method	Endpoint	Description
-POST	/api/auth/register	Registrasi user baru
-POST	/api/auth/login	Login & dapatkan JWT token
-GET	/api/products	List semua produk (+ search, filter, pagination)
-GET	/api/products/:id	Detail produk by ID
-🔒 Protected Endpoints (butuh Bearer Token)
-Method	Endpoint	Description
-POST	/api/products	Buat produk baru
-PUT	/api/products/:id	Update produk
-DELETE	/api/products/:id	Hapus produk
-📋 Query Parameters untuk GET /api/products
-Parameter	Contoh	Description
-search	?search=T-Shirt	Cari produk berdasarkan judul (LIKE)
-category	?category=Clothes	Filter berdasarkan kategori (exact match)
-limit	?limit=10	Jumlah item per halaman (default: 10)
-page	?page=2	Nomor halaman (default: 1)
-🧪 Contoh Request
-1. Register User
-bash
+## Configuration
+
+Create a `.env` file in the project root (a template is provided in `.env.example`):
+
+| Variable | Example | Description |
+|---|---|---|
+| `DB_HOST` | `127.0.0.1` | MySQL host |
+| `DB_PORT` | `3306` | MySQL port |
+| `DB_USER` | `root` | MySQL user |
+| `DB_PASSWORD` | *(empty)* | MySQL password |
+| `DB_NAME` | `product_api` | Database name |
+| `JWT_SECRET` | `your-super-secret-jwt-key-min-32-chars` | Signing key for JWTs (use 32+ random characters) |
+| `JWT_ACCESS_EXPIRY` | `15m` | Access token lifetime |
+| `JWT_REFRESH_EXPIRY` | `168h` | Refresh token lifetime (7 days) |
+| `SERVER_PORT` | `8080` | HTTP server port |
+| `CACHE_TTL` | `60s` | Cache time-to-live |
+
+> Never commit your real `.env` file. Generate a strong secret with `openssl rand -hex 32`.
+
+---
+
+## CLI Commands
+
+| Command | Description |
+|---|---|
+| `go run main.go serve` | Start the HTTP server |
+| `go run main.go fresh:migrate` | Drop all tables and re-run migrations |
+| `go run main.go fresh:migrate --seeder` | Drop, re-migrate and seed demo data |
+
+---
+
+## API Reference
+
+**Base URL:** `http://localhost:8080`
+
+Protected endpoints require the header `Authorization: Bearer <authentication_token>`.
+
+### Endpoints
+
+| Method | Endpoint | Auth | Description |
+|---|---|:---:|---|
+| `POST` | `/api/auth/register` | No | Register a new user |
+| `POST` | `/api/auth/login` | No | Log in and receive JWT tokens |
+| `GET` | `/api/products` | No | List products (search, filter, pagination) |
+| `GET` | `/api/products/:id` | No | Get product details |
+| `POST` | `/api/products` | Yes | Create a product |
+| `PUT` | `/api/products/:id` | Yes | Update a product |
+| `DELETE` | `/api/products/:id` | Yes | Delete a product |
+
+### Query parameters for `GET /api/products`
+
+| Parameter | Example | Description |
+|---|---|---|
+| `search` | `?search=T-Shirt` | Search by title (`LIKE`) |
+| `category` | `?category=Clothes` | Filter by category (exact match) |
+| `limit` | `?limit=10` | Items per page (default: `10`) |
+| `page` | `?page=2` | Page number (default: `1`) |
+
+### HTTP status codes
+
+| Code | Meaning |
+|---|---|
+| `200 OK` | Request succeeded |
+| `201 Created` | Resource created |
+| `400 Bad Request` | Validation failed |
+| `401 Unauthorized` | Missing, invalid or expired token |
+| `404 Not Found` | Resource does not exist |
+| `429 Too Many Requests` | Rate limit exceeded |
+
+### Examples
+
+<details>
+<summary><b>Register</b></summary>
+
+```bash
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -365,9 +314,11 @@ curl -X POST http://localhost:8080/api/auth/register \
     "password": "supersecret",
     "password_confirmation": "supersecret"
   }'
-Response (201 Created):
+```
 
-json
+Response `201 Created`:
+
+```json
 {
   "message": "User berhasil didaftarkan",
   "user": {
@@ -375,20 +326,34 @@ json
     "username": "jhon_doe"
   }
 }
-2. Login
-bash
+```
+
+</details>
+
+<details>
+<summary><b>Login</b></summary>
+
+```bash
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "jhon_doe", "password": "supersecret"}'
-Response (200 OK):
+```
 
-json
+Response `200 OK`:
+
+```json
 {
   "authentication_token": "eyJhbGciOiJIUzI1NiIs...",
   "refresh_token": "eyJhbGciOiJIUzI1NiIs..."
 }
-3. Create Product (butuh token)
-bash
+```
+
+</details>
+
+<details>
+<summary><b>Create a product</b></summary>
+
+```bash
 curl -X POST http://localhost:8080/api/products \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <TOKEN>" \
@@ -397,18 +362,20 @@ curl -X POST http://localhost:8080/api/products \
     "price": 99.99,
     "description": "High-quality cotton t-shirt",
     "category": "Clothes",
-    "images": ["https://placeimg.com/640/480/any"]
+    "images": ["https://picsum.photos/640/480"]
   }'
-Response (201 Created):
+```
 
-json
+Response `201 Created`:
+
+```json
 {
   "id": 1,
   "title": "Awesome T-Shirt",
   "price": 99.99,
   "description": "High-quality cotton t-shirt",
   "category": "Clothes",
-  "images": ["https://placeimg.com/640/480/any"],
+  "images": ["https://picsum.photos/640/480"],
   "created_at": "2026-10-13T12:26:04+07:00",
   "created_by": "jhon_doe",
   "created_by_id": "1",
@@ -416,8 +383,14 @@ json
   "updated_by": "jhon_doe",
   "updated_by_id": "1"
 }
-4. Get Products dengan Filter
-bash
+```
+
+</details>
+
+<details>
+<summary><b>List, search, filter and paginate</b></summary>
+
+```bash
 # Search by title
 curl "http://localhost:8080/api/products?search=T-Shirt"
 
@@ -427,109 +400,139 @@ curl "http://localhost:8080/api/products?category=Electronics"
 # Pagination
 curl "http://localhost:8080/api/products?limit=2&page=1"
 
-# Kombinasi
+# Combined
 curl "http://localhost:8080/api/products?search=Wallet&category=Accessories&limit=5"
+```
 
-🧪 Postman Testing
-Koleksi Postman untuk testing semua endpoint bisa diimpor dari file postman_collection.json (tersedia di root project).
+</details>
 
-Alur Testing yang Disarankan
-text
-1. POST /api/auth/login           → dapatkan token
-2. Copy authentication_token
-3. POST /api/products             → buat produk (dengan Bearer token)
-4. GET  /api/products             → lihat semua produk
-5. GET  /api/products/:id         → detail produk
-6. PUT  /api/products/:id         → update produk (dengan Bearer token)
-7. DELETE /api/products/:id       → hapus produk (dengan Bearer token)
-Setup Environment di Postman
-Variable	Value
-base_url	http://localhost:8080
-token	<paste setelah login>
-Testing Rate Limit
-Auth endpoints: Kirim 4 request login dalam <60 detik → request ke-4 akan dapat 429 Too Many Requests
+---
 
-Product write endpoints: Kirim 2 request POST dalam <5 detik → request ke-2 akan dapat 429
+## Rate Limiting
 
+Limits are enforced per client IP address. Requests over the limit receive `429 Too Many Requests`.
 
-📸 Screenshots
-<details open> <summary><b>🖥️ API Response Examples</b></summary> <br/>
-Login Success — Response with JWT Tokens
+| Scope | Endpoints | Limit |
+|---|---|---|
+| Authentication | `POST /api/auth/register`, `POST /api/auth/login` | 3 requests / 60 seconds |
+| Product writes | `POST`, `PUT`, `DELETE` on `/api/products` | 1 request / 5 seconds |
 
-<img width="100%" alt="Login Response" src="docs/images/login-response.png" />
-GET Products — List with Pagination
+To verify: send 4 login requests within 60 seconds (the 4th returns `429`), or 2 `POST /api/products` requests within 5 seconds (the 2nd returns `429`).
 
-<img width="100%" alt="Product List" src="docs/images/product-list.png" />
-POST Product — Create with Authorization
+---
 
-<img width="100%" alt="Create Product" src="docs/images/create-product.png" />
-Rate Limit — 429 Too Many Requests
+## API Testing with Postman
 
-<img width="100%" alt="Rate Limit" src="docs/images/rate-limit.png" /></details><details> <summary><b>🐳 Docker Deployment</b></summary> <br/>
-docker compose up -d — Containers Running
+Import `postman_collection.json` (located in the project root) to test every endpoint.
 
-<img width="100%" alt="Docker Running" src="docs/images/docker-running.png" />
-Fresh Migrate & Seeder Output
+**Suggested flow**
 
-<img width="100%" alt="Migrate Seeder" src="docs/images/migrate-seeder.png" /></details>
-🗺️ Roadmap
-Shipped ✅	Planned ⬜
-✅ Product CRUD (create, read, update, delete)	⬜ Caching dengan Redis
-✅ JWT authentication (access + refresh)	⬜ File upload untuk product images
-✅ bcrypt password hashing	⬜ Product categories sebagai tabel terpisah
-✅ Rate limiting per IP	⬜ Real-time notifications (WebSocket)
-✅ CORS support	⬜ Unit testing (testify + mockery)
-✅ Search, filter, pagination	⬜ CI/CD dengan GitHub Actions
-✅ Soft delete dengan GORM	⬜ API versioning (v1, v2)
-✅ Docker & docker-compose	⬜ Swagger documentation UI
-✅ Fresh migrate & seeder command	⬜ GraphQL endpoint (alternative)
-✅ Input validation	⬜ Elasticsearch untuk search
-✅ Multi-stage Docker build	⬜ Kubernetes manifests
-✅ Environment-based config	⬜ Email verification on register
+1. `POST /api/auth/login` and copy `authentication_token`
+2. `POST /api/products` to create a product (Bearer token)
+3. `GET /api/products` and `GET /api/products/:id` to read
+4. `PUT /api/products/:id` to update (Bearer token)
+5. `DELETE /api/products/:id` to delete (Bearer token)
 
-🎨 Design Decisions
-Why Go? — Go menawarkan performa tinggi, concurrency model yang efisien (goroutines), static typing, dan kompilasi cepat. Cocok untuk backend REST API yang harus melayani banyak concurrent request.
+**Environment variables**
 
-Why Gin? — Gin adalah web framework Go paling populer dengan performa tinggi, middleware ekosistem yang kaya, dan sintaks routing yang bersih. Binding & validation bawaan menghemat waktu development.
+| Variable | Value |
+|---|---|
+| `base_url` | `http://localhost:8080` |
+| `token` | The `authentication_token` from the login response |
 
-Why GORM? — GORM mempercepat development dengan auto-migration, relasi model, hooks, dan soft delete. Menghilangkan boilerplate SQL untuk operasi CRUD standar.
+---
 
-Why JWT? — Stateless authentication — tidak perlu session storage di server, cocok untuk horizontal scaling. Access token + refresh token pattern memberikan security & UX yang seimbang.
+## Screenshots
 
-Why Rate Limiting? — Melindungi endpoint sensitif (login, register) dari brute-force attack, dan mencegah abuse pada endpoint write (create/update/delete).
+<details>
+<summary><b>API responses</b></summary>
 
-Why Layered Architecture? — Pemisahan concern yang jelas antara controller (HTTP), service (business logic), repository (data access), dan model (entity). Memudahkan testing, maintenance, dan scaling tim.
+| Login | Product list |
+|---|---|
+| ![Login response](docs/images/login-response.png) | ![Product list](docs/images/product-list.png) |
 
+| Create product | Rate limit (429) |
+|---|---|
+| ![Create product](docs/images/create-product.png) | ![Rate limit](docs/images/rate-limit.png) |
 
-🤝 Contributing
-Contributions, issues, dan feature requests sangat diterima!
+</details>
 
-Fork repository ini
+<details>
+<summary><b>Docker deployment</b></summary>
 
-Buat feature branch: git checkout -b feature/amazing-feature
+| Containers running | Migrate and seed output |
+|---|---|
+| ![Docker running](docs/images/docker-running.png) | ![Migrate and seeder](docs/images/migrate-seeder.png) |
 
-Commit perubahan: git commit -m "Add amazing feature"
+</details>
 
-Push ke branch: git push origin feature/amazing-feature
+---
 
-Buat Pull Request
+## Design Decisions
 
+- **Go**: High performance, efficient concurrency (goroutines), static typing and fast compilation make it a strong fit for APIs that serve many concurrent requests.
+- **Gin**: A mature, high-performance framework with a rich middleware ecosystem, clean routing and built-in binding and validation.
+- **GORM**: Removes CRUD boilerplate and provides auto-migration, hooks and soft delete.
+- **JWT**: Stateless authentication that scales horizontally without server-side sessions. The access and refresh token pair balances security and user experience.
+- **Rate limiting**: Protects login and registration from brute-force attacks and limits abuse of write endpoints.
+- **Layered architecture**: Separating controller, service, repository and model keeps responsibilities clear and makes the code easier to test, maintain and extend across a team.
 
-📄 License
-Project ini dilisensikan di bawah MIT License — lihat file LICENSE untuk detail.
+---
 
+## Roadmap
 
-<div align="center"><img width="150" height="150" alt="Logo" src="https://cdn-icons-png.flaticon.com/512/3233/3233509.png" />
-Dibuat dengan ❤️ oleh [Nama Anda]
-Backend Developer • Go Enthusiast
+**Shipped**
 
-https://img.shields.io/badge/GitHub-USERNAME-181717?style=for-the-badge&logo=github&logoColor=white
-https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white
-https://img.shields.io/badge/Email-Contact-EA4335?style=for-the-badge&logo=gmail&logoColor=white
+- [x] Product CRUD
+- [x] JWT authentication (access and refresh tokens)
+- [x] bcrypt password hashing
+- [x] Per-IP rate limiting
+- [x] CORS support
+- [x] Search, filter and pagination
+- [x] Soft delete
+- [x] Docker and Docker Compose (multi-stage build)
+- [x] Fresh migrate and seeder command
+- [x] Input validation
+- [x] Environment-based configuration
 
+**Planned**
 
-Jika project ini membantu Anda, mohon berikan ⭐
+- [ ] Redis caching
+- [ ] File upload for product images
+- [ ] Categories as a separate table
+- [ ] Unit tests (testify + mockery)
+- [ ] CI/CD with GitHub Actions
+- [ ] API versioning (`/api/v1`)
+- [ ] Swagger / OpenAPI documentation UI
+- [ ] Email verification on registration
+- [ ] Kubernetes manifests
 
-<sub>Built with Go 1.24, Gin, GORM, MySQL 8, and Docker</sub>
+---
 
-</div> ```
+## Contributing
+
+Contributions, issues and feature requests are welcome.
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m "Add amazing feature"`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+---
+
+## License
+
+Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
+
+---
+
+## Author
+
+**Your Name**, Backend Developer
+
+[![GitHub](https://img.shields.io/badge/GitHub-YOUR__USERNAME-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/YOUR_USERNAME)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/YOUR_PROFILE)
+[![Email](https://img.shields.io/badge/Email-Contact-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:you@example.com)
+
+If this project is useful to you, please consider giving it a star.

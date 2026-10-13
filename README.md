@@ -537,7 +537,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](https:/
 
 Full Stack Developer • Backend Engineer
 
-[![GitHub](https://img.shields.io/badge/GitHub-EbenEzerManurung-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/EbenEzerManurung)
+![Go](https://img.shields.io/badge/Go-1.24-00ADD8?style=flat-square&logo=go&logoColor=white)
 
 <br/>
 

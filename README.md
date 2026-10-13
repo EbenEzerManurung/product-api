@@ -531,7 +531,6 @@ This project is licensed under the **MIT License** — see the [LICENSE](https:/
 
 <div align="center">
 
-<img width="256" height="256" alt="image" src="https://github.com/user-attachments/assets/0e9e5c7a-02f2-488c-8e99-9a24b82f7d40" />
 
 ### Eben Nezer Manurung
 
